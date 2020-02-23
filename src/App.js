@@ -6,8 +6,6 @@ import loginService from './services/login'
 const LoginForm = ({onSubmit, values, onChange}) => {
   return (
     <>
-      <h1>Log in</h1>
-
       <form onSubmit={onSubmit}>
         <div>
           Username:
@@ -36,7 +34,7 @@ const LoginForm = ({onSubmit, values, onChange}) => {
 const CreateBlogForm = ({onSubmit, values, onChange}) => {
   return (
     <>
-      <h1>Create a new blog</h1>
+      <h2>Create a new blog</h2>
       <form onSubmit={onSubmit}>
         <div>
           Title:
@@ -71,6 +69,20 @@ const CreateBlogForm = ({onSubmit, values, onChange}) => {
   )
 }
 
+const Notification = ({message, error}) => {
+  if (message === null && error === null) {
+      return null
+  } else if (error !== null) {
+      return (
+          <div className='error'>{error}</div>
+      )
+  }
+
+  return (
+      <div className='notification'>{message}</div>
+  )
+} 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -79,6 +91,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -95,6 +109,20 @@ const App = () => {
     }
   }, [])
 
+  const notifyOfSuccess = message => {
+    setNotification(message)
+      setTimeout(() => {
+        setNotification(null)
+      }, 4000)
+  }
+
+  const notifyOfError = message => {
+    setError(message)
+      setTimeout(() => {
+        setError(null)
+      }, 4000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -108,8 +136,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      notifyOfSuccess('login was successful')
     } catch (exception) {
-      console.log(exception.message)
+      notifyOfError('wrong username or password')
     }
   }
 
@@ -117,6 +146,7 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser')
     blogService.setToken(null)
     setUser(null)
+    notifyOfSuccess('logout was successful')
   }
 
   const handleCreateNewBlog = async (event) => {
@@ -128,32 +158,45 @@ const App = () => {
       url: newUrl
     }
 
-    const blog = await blogService.create(newBlog)
-    setBlogs(blogs.concat(blog))
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
+    try {
+      const blog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(blog))
+      setNewTitle('')
+      setNewAuthor('')
+      setNewUrl('')
+
+      notifyOfSuccess(`New blog was added: ${blog.title} by ${blog.author}`)
+    } catch (exception) {
+      notifyOfError('Something went wrong with creating the new blog')
+    }
   }
 
   if (user === null) {
     return (
-      <LoginForm 
-        onSubmit={handleLogin}
-        values={{
-          username: username,
-          password: password
-        }}
-        onChange={{
-          username: ({target}) => setUsername(target.value),
-          password: ({target}) => setPassword(target.value)
-        }}
-      />
+      <>
+        <h1>Log in</h1>
+        <Notification message={notification} error={error} />
+
+        <LoginForm 
+          onSubmit={handleLogin}
+          values={{
+            username: username,
+            password: password
+          }}
+          onChange={{
+            username: ({target}) => setUsername(target.value),
+            password: ({target}) => setPassword(target.value)
+          }}
+        />
+      </>
     )
   }
 
   return (
     <div>
       <h1>Blogs</h1>
+
+      <Notification message={notification} error={error} />
 
       <p>
         <span>{user.name} logged in </span> 
