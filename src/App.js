@@ -184,15 +184,17 @@ const App = () => {
         <CreateBlogForm createBlog={createNewBlog} />
       </Togglable><br/>
 
-      {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateBlog={updateBlog}
-          showDelete={user.username === blog.user.username}
-          deleteBlog={deleteBlog}
-        />
-      )}
+      <div id='blogs-div'>
+        {blogs.map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            showDelete={user.username === blog.user.username}
+            deleteBlog={deleteBlog}
+          />
+        )}
+      </div>
     </div>
   )
 }
