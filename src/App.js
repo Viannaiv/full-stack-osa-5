@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import CreateBlogForm from './components/CreateBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
@@ -32,44 +33,6 @@ const LoginForm = ({onSubmit, values, onChange}) => {
   )
 }
 
-const CreateBlogForm = ({onSubmit, values, onChange}) => {
-  return (
-    <>
-      <h2>Create a new blog</h2>
-      <form onSubmit={onSubmit}>
-        <div>
-          Title:
-          <input
-            type="text"
-            value={values.title}
-            name="Title"
-            onChange={onChange.title}
-          />
-        </div>
-        <div>
-          Author:
-          <input
-            type="text"
-            value={values.author}
-            name="Author"
-            onChange={onChange.author}
-          />
-        </div>
-        <div>
-          Url:
-          <input
-            type="text"
-            value={values.url}
-            name="Url"
-            onChange={onChange.url}
-          />
-        </div>
-        <button type="submit">Create</button>
-      </form><br/>
-    </>
-  )
-}
-
 const Notification = ({message, error}) => {
   if (message === null && error === null) {
       return null
@@ -89,9 +52,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [notification, setNotification] = useState(null)
   const [error, setError] = useState(null)
 
@@ -150,22 +110,11 @@ const App = () => {
     notifyOfSuccess('logout was successful')
   }
 
-  const handleCreateNewBlog = async (event) => {
-    event.preventDefault()
-
-    const newBlog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
+  const createNewBlog = async (newBlog) => {
     try {
       createBlogFormRef.current.toggleVisibility()
       const blog = await blogService.create(newBlog)
       setBlogs(blogs.concat(blog))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
 
       notifyOfSuccess(`New blog was added: ${blog.title} by ${blog.author}`)
     } catch (exception) {
@@ -208,19 +157,7 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel='New Blog' ref={createBlogFormRef}>
-        <CreateBlogForm 
-          onSubmit={handleCreateNewBlog}
-          values={{
-            title: newTitle,
-            author: newAuthor,
-            url: newUrl
-          }}
-          onChange={{
-            title: ({target}) => setNewTitle(target.value),
-            author: ({target}) => setNewAuthor(target.value),
-            url: ({target}) => setNewUrl(target.value)
-          }}
-        />
+        <CreateBlogForm createBlog={createNewBlog} />
       </Togglable><br/>
       
       {blogs.map(blog =>
