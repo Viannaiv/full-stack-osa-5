@@ -5,7 +5,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
 
-const LoginForm = ({onSubmit, values, onChange}) => {
+const LoginForm = ({ onSubmit, values, onChange }) => {
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -33,19 +33,19 @@ const LoginForm = ({onSubmit, values, onChange}) => {
   )
 }
 
-const Notification = ({message, error}) => {
+const Notification = ({ message, error }) => {
   if (message === null && error === null) {
-      return null
+    return null
   } else if (error !== null) {
-      return (
-          <div className='error'>{error}</div>
-      )
+    return (
+      <div className='error'>{error}</div>
+    )
   }
 
   return (
-      <div className='notification'>{message}</div>
+    <div className='notification'>{message}</div>
   )
-} 
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -58,7 +58,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -72,16 +72,16 @@ const App = () => {
 
   const notifyOfSuccess = message => {
     setNotification(message)
-      setTimeout(() => {
-        setNotification(null)
-      }, 4000)
+    setTimeout(() => {
+      setNotification(null)
+    }, 4000)
   }
 
   const notifyOfError = message => {
     setError(message)
-      setTimeout(() => {
-        setError(null)
-      }, 4000)
+    setTimeout(() => {
+      setError(null)
+    }, 4000)
   }
 
   const handleLogin = async (event) => {
@@ -124,10 +124,10 @@ const App = () => {
 
   const updateBlog = async (id, updatedBlog, blogUser) => {
     const blog = await blogService.update(id, updatedBlog)
-    // the user is added here temporarily since the backend currently does 
+    // the user is added here temporarily since the backend currently does
     // not return the user after an update in the wanted form
     blog.user = blogUser
-    
+
     setBlogs(blogs.map(b => b.id === blog.id ? blog : b))
   }
 
@@ -150,15 +150,15 @@ const App = () => {
         <h1>Log in</h1>
         <Notification message={notification} error={error} />
 
-        <LoginForm 
+        <LoginForm
           onSubmit={handleLogin}
           values={{
             username: username,
             password: password
           }}
           onChange={{
-            username: ({target}) => setUsername(target.value),
-            password: ({target}) => setPassword(target.value)
+            username: ({ target }) => setUsername(target.value),
+            password: ({ target }) => setPassword(target.value)
           }}
         />
       </>
@@ -176,16 +176,16 @@ const App = () => {
       <Notification message={notification} error={error} />
 
       <p>
-        <span>{user.name} logged in </span> 
+        <span>{user.name} logged in </span>
         <button onClick={handleLogout}>Log out</button>
       </p>
 
       <Togglable buttonLabel='New Blog' ref={createBlogFormRef}>
         <CreateBlogForm createBlog={createNewBlog} />
       </Togglable><br/>
-      
+
       {blogs.map(blog =>
-        <Blog 
+        <Blog
           key={blog.id}
           blog={blog}
           updateBlog={updateBlog}

@@ -27,7 +27,7 @@ const Blog = ({ blog, updateBlog, showDelete, deleteBlog }) => {
       url: blog.url
     }
 
-    // the user is added here temporarily since the backend currently does 
+    // the user is added here temporarily since the backend currently does
     // not return the user after an update in the wanted form
     updateBlog(blog.id, updatedBlog, blog.user)
   }
@@ -40,13 +40,13 @@ const Blog = ({ blog, updateBlog, showDelete, deleteBlog }) => {
     <div style={style}>
       {blog.title} {blog.author} <button onClick={toggleShowDetails}>{showDetails ? 'Hide' : 'View'}</button>
       { showDetails ?
-          <>
-            <br/>{blog.url}
-            <br/> Likes: {blog.likes} <button onClick={like}>Like</button>
-            <br/>{blog.user.name}
-            {showDelete ? <><br/><button onClick={removeBlog}>Remove</button></> : ''}
-          </> :
-          ''
+        <>
+          <br/>{blog.url}
+          <br/> Likes: {blog.likes} <button onClick={like}>Like</button>
+          <br/>{blog.user.name}
+          {showDelete ? <><br/><button onClick={removeBlog}>Remove</button></> : ''}
+        </> :
+        ''
       }
     </div>
   )
