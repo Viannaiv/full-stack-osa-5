@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 
 const LoginForm = ({onSubmit, values, onChange}) => {
   return (
@@ -159,6 +160,7 @@ const App = () => {
     }
 
     try {
+      createBlogFormRef.current.toggleVisibility()
       const blog = await blogService.create(newBlog)
       setBlogs(blogs.concat(blog))
       setNewTitle('')
@@ -192,6 +194,8 @@ const App = () => {
     )
   }
 
+  const createBlogFormRef = React.createRef()
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -203,20 +207,22 @@ const App = () => {
         <button onClick={handleLogout}>Log out</button>
       </p>
 
-      <CreateBlogForm 
-        onSubmit={handleCreateNewBlog}
-        values={{
-          title: newTitle,
-          author: newAuthor,
-          url: newUrl
-        }}
-        onChange={{
-          title: ({target}) => setNewTitle(target.value),
-          author: ({target}) => setNewAuthor(target.value),
-          url: ({target}) => setNewUrl(target.value)
-        }}
-      />
-
+      <Togglable buttonLabel='New Blog' ref={createBlogFormRef}>
+        <CreateBlogForm 
+          onSubmit={handleCreateNewBlog}
+          values={{
+            title: newTitle,
+            author: newAuthor,
+            url: newUrl
+          }}
+          onChange={{
+            title: ({target}) => setNewTitle(target.value),
+            author: ({target}) => setNewAuthor(target.value),
+            url: ({target}) => setNewUrl(target.value)
+          }}
+        />
+      </Togglable><br/>
+      
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
