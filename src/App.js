@@ -122,6 +122,15 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (id, updatedBlog, blogUser) => {
+    const blog = await blogService.update(id, updatedBlog)
+     // the user is added here temporarily since the backend currently does 
+    // not return the user after an update in the wanted form
+    blog.user = blogUser
+    
+    setBlogs(blogs.map(b => b.id === blog.id ? blog : b))
+  }
+
   if (user === null) {
     return (
       <>
@@ -161,7 +170,7 @@ const App = () => {
       </Togglable><br/>
       
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )

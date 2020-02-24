@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const style = {
@@ -19,7 +19,17 @@ const Blog = ({ blog }) => {
   }
 
   const like = () => {
+    const updatedBlog = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
 
+    // the user is added here temporarily since the backend currently does 
+    // not return the user after an update in the wanted form
+    updateBlog(blog.id, updatedBlog, blog.user)
   }
 
   return (
