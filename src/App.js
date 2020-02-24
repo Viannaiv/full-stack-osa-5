@@ -8,7 +8,7 @@ import Togglable from './components/Togglable'
 const LoginForm = ({ onSubmit, values, onChange }) => {
   return (
     <>
-      <form onSubmit={onSubmit}>
+      <form id='login-form' onSubmit={onSubmit}>
         <div>
           Username:
           <input
