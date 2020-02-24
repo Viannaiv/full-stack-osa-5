@@ -154,6 +154,8 @@ const App = () => {
 
   const createBlogFormRef = React.createRef()
 
+  blogs.sort((a, b) => b.likes - a.likes)
+
   return (
     <div>
       <h1>Blogs</h1>
