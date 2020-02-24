@@ -13,7 +13,10 @@ describe('<Blog />', () => {
     title: 'test_title',
     author: 'test_author',
     url: 'test_url/test',
-    likes: 2
+    likes: 2,
+    user: {
+      name: 'Tester'
+    }
   }
 
   beforeEach(() => {
@@ -47,6 +50,27 @@ describe('<Blog />', () => {
     )
 
     expect(component.container).not.toHaveTextContent(
+      'Likes: 2'
+    )
+  })
+
+  test('renders title, author, url and likes when the View-button is pressed', () => {
+    const button = component.getByText('View')
+    fireEvent.click(button)
+
+    expect(component.container).toHaveTextContent(
+      'test_title'
+    )
+
+    expect(component.container).toHaveTextContent(
+      'test_author'
+    )
+
+    expect(component.container).toHaveTextContent(
+      'test_url/test'
+    )
+
+    expect(component.container).toHaveTextContent(
       'Likes: 2'
     )
   })
