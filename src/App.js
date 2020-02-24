@@ -124,11 +124,24 @@ const App = () => {
 
   const updateBlog = async (id, updatedBlog, blogUser) => {
     const blog = await blogService.update(id, updatedBlog)
-     // the user is added here temporarily since the backend currently does 
+    // the user is added here temporarily since the backend currently does 
     // not return the user after an update in the wanted form
     blog.user = blogUser
     
     setBlogs(blogs.map(b => b.id === blog.id ? blog : b))
+  }
+
+  const deleteBlog = async (id, blogObject) => {
+    const confirmed = window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)
+    if (confirmed) {
+      try {
+        await blogService.remove(id)
+        notifyOfSuccess(`Blog removed: ${blogObject.title} by ${blogObject.author}`)
+        setBlogs(blogs.filter(b => b.id !== id))
+      } catch (exception) {
+        notifyOfError('Something went wrong with removing the blog')
+      }
+    }
   }
 
   if (user === null) {
@@ -172,7 +185,13 @@ const App = () => {
       </Togglable><br/>
       
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          showDelete={user.username === blog.user.username}
+          deleteBlog={deleteBlog}
+        />
       )}
     </div>
   )
