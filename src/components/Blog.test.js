@@ -6,8 +6,8 @@ import Blog from './Blog'
 describe('<Blog />', () => {
   let component
 
-  const updateBlog = jest.fn()
-  const deleteBlog = jest.fn()
+  let updateBlog
+  let deleteBlog
   const showDelete = false
   const blog = {
     title: 'test_title',
@@ -20,6 +20,9 @@ describe('<Blog />', () => {
   }
 
   beforeEach(() => {
+    updateBlog = jest.fn()
+    deleteBlog = jest.fn()
+
     component = render(
       <Blog
         blog={blog}
@@ -73,5 +76,16 @@ describe('<Blog />', () => {
     expect(component.container).toHaveTextContent(
       'Likes: 2'
     )
+  })
+
+  test('calls event handler twice when the Like button is pressed twice', () => {
+    const viewButton = component.getByText('View')
+    fireEvent.click(viewButton)
+
+    const likeButton = component.getByText('Like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(updateBlog.mock.calls.length).toBe(2)
   })
 })
